@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="utf-8" />
+		<title>Boites et diagrammes</title>
+		<link rel="stylesheet" href="dist/reset.css" />
+		<link rel="stylesheet" href="dist/reveal.css" />
+		<link rel="stylesheet" href="dist/theme/odoo.css" />
+		<link rel="stylesheet" href="css/custo_odoo.css" />
+		<style>
+			.reveal section { font-size: 0.72em; }
+			.reveal h3 { font-size: 0.9em; margin-bottom: 0.4em; opacity: 0.6; }
+			.lab { font-size: 0.42em; opacity: 0.55; margin-top: 0.3em; }
+		</style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+
+				<!-- 1. Toutes les formes de fleches -->
+				<section>
+					<h3>Formes de fleches</h3>
+					<div class="o-flow o-gap-lg o-purple" style="align-items: flex-end">
+						<div><i class="o-arrow"></i><div class="lab">o-arrow</div></div>
+						<div><i class="o-arrow o-arrow-soft"></i><div class="lab">soft</div></div>
+						<div><i class="o-arrow o-arrow-curve"></i><div class="lab">curve</div></div>
+						<div><i class="o-arrow o-arrow-both"></i><div class="lab">both</div></div>
+						<div><i class="o-arrow o-arrow-dashed"></i><div class="lab">dashed</div></div>
+					</div>
+					<div class="o-flow o-gap-lg o-purple" style="align-items: flex-end; margin-top: 1.4em">
+						<div><i class="o-arrow o-arrow-dashed-curve"></i><div class="lab">dashed-curve</div></div>
+						<div><i class="o-arrow o-arrow-loop"></i><div class="lab">loop</div></div>
+						<div><i class="o-arrow o-arrow-back"></i><div class="lab">back</div></div>
+						<div><i class="o-arrow o-arrow-zigzag"></i><div class="lab">zigzag</div></div>
+						<div><i class="o-arrow o-arrow-squiggle"></i><div class="lab">squiggle</div></div>
+					</div>
+				</section>
+
+				<!-- 2. Directions -->
+				<section>
+					<h3>Directions et miroir</h3>
+					<div class="o-flow o-gap-lg o-cyan" style="align-items: center">
+						<div><i class="o-arrow"></i><div class="lab">defaut</div></div>
+						<div><i class="o-arrow o-left"></i><div class="lab">o-left</div></div>
+						<div><i class="o-arrow o-down"></i><div class="lab">o-down</div></div>
+						<div><i class="o-arrow o-up"></i><div class="lab">o-up</div></div>
+						<div><i class="o-arrow o-arrow-curve"></i><div class="lab">curve</div></div>
+						<div><i class="o-arrow o-arrow-curve o-mirror"></i><div class="lab">+ o-mirror</div></div>
+						<div><i class="o-arrow o-arrow-curve o-down"></i><div class="lab">+ o-down</div></div>
+					</div>
+					<div class="o-flow o-gap-lg o-cyan" style="margin-top: 1.6em">
+						<div><i class="o-arrow o-arrow-sm"></i><div class="lab">sm</div></div>
+						<div><i class="o-arrow"></i><div class="lab">normal</div></div>
+						<div><i class="o-arrow o-arrow-lg"></i><div class="lab">lg</div></div>
+					</div>
+				</section>
+
+				<!-- 3. Boites -->
+				<section>
+					<h3>Boites</h3>
+					<div class="o-flow o-gap-lg">
+						<div class="o-box">Contour</div>
+						<div class="o-box o-box-fill">Fond teinte</div>
+						<div class="o-box o-box-dashed">Pointille</div>
+						<div class="o-box o-box-note">Post-it</div>
+						<div class="o-box o-bubble">Rond</div>
+					</div>
+					<div class="o-flow o-gap-lg" style="margin-top: 1.5em">
+						<div class="o-box o-box-sm">petite</div>
+						<div class="o-box">normale</div>
+						<div class="o-box o-box-lg">grande</div>
+						<div class="o-box" style="width: 7em; height: 5em">large et haute</div>
+					</div>
+				</section>
+
+				<!-- 4. Schema realiste -->
+				<section>
+					<h3>Flux d'approbation</h3>
+					<div class="o-flow o-gap-lg o-yellow">
+						<div class="o-box">
+							<span class="o-box-num">1</span>
+							<b class="o-box-title">Brouillon</b>
+							<span class="o-box-text">saisi par l'employe</span>
+						</div>
+						<i class="o-arrow"><span>envoie</span></i>
+						<div class="o-box o-box-fill">
+							<span class="o-box-num">2</span>
+							<b class="o-box-title">A valider</b>
+							<span class="o-box-text">chez le manager</span>
+						</div>
+						<i class="o-arrow"><span>accepte</span></i>
+						<div class="o-box o-box-note">
+							<b class="o-box-title">Valide</b>
+							<span class="o-box-text">planning mis a jour</span>
+						</div>
+					</div>
+					<div class="o-flow o-purple" style="margin-top: 1.2em">
+						<i class="o-arrow o-arrow-back o-arrow-lg"><span>refuse</span></i>
+					</div>
+				</section>
+
+				<!-- 5. Colonne + traits etirables -->
+				<section>
+					<h3>Colonne et traits qui s'etirent</h3>
+					<div class="o-flow" style="align-items: flex-start; gap: 3em">
+						<div class="o-flow-v o-pink" style="width: 9em">
+							<div class="o-box" style="width: 100%">Contrat</div>
+							<i class="o-arrow o-down"></i>
+							<div class="o-box o-box-fill" style="width: 100%">Horaire</div>
+							<i class="o-arrow o-arrow-dashed o-down"><span>si flexible</span></i>
+							<div class="o-box o-box-dashed" style="width: 100%">Exception</div>
+						</div>
+						<div class="o-flow-v o-cyan" style="width: 16em">
+							<div class="o-flow" style="width: 100%; flex-wrap: nowrap">
+								<div class="o-box o-box-sm">Debut</div>
+								<span class="o-line-arrow"></span>
+								<div class="o-box o-box-sm">Milieu</div>
+								<span class="o-line-arrow"></span>
+								<div class="o-box o-box-sm">Fin</div>
+							</div>
+							<div class="o-flow" style="width: 100%; flex-wrap: nowrap; margin-top: 1.2em">
+								<div class="o-box o-box-sm">A</div>
+								<span class="o-line"></span>
+								<div class="o-box o-box-sm">B tres large</div>
+								<span class="o-line"></span>
+								<div class="o-box o-box-sm">C</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- 6. Couleurs + grille -->
+				<section>
+					<h3>Couleurs et grille</h3>
+					<div class="o-grid" style="--o-cols: 4; --o-gap: 1.2em">
+						<div class="o-box o-yellow">yellow</div>
+						<div class="o-box o-purple o-box-fill">purple</div>
+						<div class="o-box o-pink o-box-dashed">pink</div>
+						<div class="o-box o-cyan o-bubble">cyan</div>
+						<i class="o-arrow o-yellow"></i>
+						<i class="o-arrow o-arrow-soft o-purple"></i>
+						<i class="o-arrow o-arrow-dashed o-pink"></i>
+						<i class="o-arrow o-arrow-squiggle o-cyan"></i>
+					</div>
+					<!-- Meme gabarit des deux cotes : seul le cadre disparait -->
+					<div class="o-flow o-gap-lg o-cyan" style="margin-top: 1.4em">
+						<div class="o-box"><b class="o-box-title">cyan</b></div>
+						<i class="o-arrow"></i>
+						<div class="o-box o-transparent"><b class="o-box-title">transparent</b></div>
+					</div>
+				</section>
+
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script>
+			Reveal.initialize({ hash: true });
+		</script>
+	</body>
+</html>

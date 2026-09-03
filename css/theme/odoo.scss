@@ -1,0 +1,20 @@
+// Load utils
+@use 'sass:color';
+@use 'template/mixins' as mixins;
+
+@use "@fontsource/caveat";
+
+$active-color: #42affa;
+
+@use 'template/settings' with (
+  $main-font: "'Geist', sans-serif",
+  $heading-font: "'Caveat', cursive",
+  $heading-text-transform: none,
+  $background-color: #ffffff,
+  $main-color: #222222,
+  $heading-color: #111111,
+);
+
+@use 'template/theme';
+
+@import url('./fonts/caveat/caveat.css');
