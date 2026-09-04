@@ -467,8 +467,24 @@
                .o-box-dashed (contour pointille) .o-box-note (post-it)
                .o-bubble (pastille ronde)
                + .o-box-sm / .o-box-lg
+               + .o-box-round (angles arrondis), .o-box-round-sm / -lg
+               + .o-box-straight (cadre a la regle, l'arrondi pile sur la
+                 ligne), .o-straight sur un conteneur
                .o-box-title (titre) .o-box-text (ligne secondaire)
                .o-box-num (numero d'etape accroche a l'angle)
+   Reglages    Une boite se retouche par variables, dans un attribut style
+               comme dans une feuille a soi ; posees sur un conteneur, elles
+               valent pour tout le schema :
+                 --o-ink              couleur d'ensemble (cadre, fond, pastille)
+                 --o-box-border       couleur du seul cadre
+                 --o-box-bg           fond en dur : une couleur, un degrade
+                 --o-box-color        couleur du texte
+                 --o-box-radius       rayon des angles (avec .o-box-round)
+                 --o-box-stroke       epaisseur du trait du cadre
+                 --o-box-fill-alpha   dose d'encre de .o-box-fill
+               Exemples :
+                 <div class="o-box o-box-round" style="--o-ink: #FF7A00">
+                 <div class="o-flow" style="--o-box-radius: 1.2em">
    Fleches     .o-arrow (droite)      .o-arrow-soft (courbe douce)
                .o-arrow-curve (grande courbe)  .o-arrow-both (double sens)
                .o-arrow-dashed        .o-arrow-dashed-curve
@@ -524,7 +540,17 @@
    laisse les bouts arrondis se croiser aux angles, comme un cadre trace a la
    main. */
 .reveal .o-box {
-  --o-box-stroke: 0.3em;
+  /* Une boite se retouche par variables : voir le recapitulatif en tete de
+     section. Chacune est relue avec une valeur de repli plutot que posee en
+     dur ici, pour qu'une valeur mise sur un conteneur descende sur toutes
+     les boites du schema - d'ou ce relais pour l'epaisseur du trait. */
+  --o-stroke: var(--o-box-stroke, 0.3em);
+  /* Epaisseur du trait lui-meme : le SVG en trace 4.4 unites dans une bande
+     de 12. Le cadre a la regle s'y accorde. */
+  --o-line: calc(var(--o-stroke) * 0.367);
+  /* Rayon de la boite : l'aplat et le cadre a la regle le suivent. Les
+     variantes le redefinissent plutot que de reecrire border-radius. */
+  --o-round: 0.18em;
   position: relative;
   display: flex;
   flex: 0 1 auto;
@@ -535,10 +561,12 @@
   padding: 0.7em 1em;
   text-align: center;
   line-height: 1.25;
+  color: var(--o-box-color, inherit);
   background: var(--o-box-bg, transparent);
-  /* Juste de quoi adoucir l'aplat : au-dela, ses angles arrondis se voient a
-     l'interieur du cadre, qui lui est trace d'equerre. */
-  border-radius: 0.18em;
+  /* Sans arrondi demande, juste de quoi adoucir l'aplat : au-dela, ses
+     angles se verraient a l'interieur du cadre, qui lui est trace
+     d'equerre. */
+  border-radius: var(--o-round);
 }
 
 .reveal .o-box::before {
@@ -546,7 +574,8 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-color: var(--o-ink);
+  /* --o-box-border teinte le seul cadre ; sans lui, il prend l'encre. */
+  background-color: var(--o-box-border, var(--o-ink));
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 12' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M3,7 C42,4.8 80,7.2 118,5.8 C156,4.4 194,7.6 232,6.6 C260,5.9 280,7 297,5.2'/%3E%3C/svg%3E"),
                      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 12' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M3,5.4 C40,7.6 78,5 116,6.4 C154,7.8 192,4.8 230,5.8 C258,6.5 280,5.4 297,7.2'/%3E%3C/svg%3E"),
                      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 300' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M7,3 C4.8,42 7.2,80 5.8,118 C4.4,156 7.6,194 6.6,232 C5.9,260 7,280 5.2,297'/%3E%3C/svg%3E"),
@@ -561,12 +590,12 @@
      leurs bouts arrondis depassent des traits horizontaux et laissent quatre
      ergots identiques aux angles. Ainsi seul le trait horizontal deborde, et
      le croisement ressemble a un angle trace d'un geste. */
-  -webkit-mask-size: 100% var(--o-box-stroke), 100% var(--o-box-stroke),
-                     var(--o-box-stroke) calc(100% - 0.2em),
-                     var(--o-box-stroke) calc(100% - 0.2em);
-  mask-size: 100% var(--o-box-stroke), 100% var(--o-box-stroke),
-             var(--o-box-stroke) calc(100% - 0.2em),
-             var(--o-box-stroke) calc(100% - 0.2em);
+  -webkit-mask-size: 100% var(--o-stroke), 100% var(--o-stroke),
+                     var(--o-stroke) calc(100% - 0.2em),
+                     var(--o-stroke) calc(100% - 0.2em);
+  mask-size: 100% var(--o-stroke), 100% var(--o-stroke),
+             var(--o-stroke) calc(100% - 0.2em),
+             var(--o-stroke) calc(100% - 0.2em);
   -webkit-mask-position: left top, left bottom, left center, right center;
   mask-position: left top, left bottom, left center, right center;
 }
@@ -584,27 +613,207 @@
               url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 44' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M5.6,4 L6.8,28'/%3E%3C/svg%3E");
   -webkit-mask-repeat: round no-repeat, round no-repeat, no-repeat round, no-repeat round;
   mask-repeat: round no-repeat, round no-repeat, no-repeat round, no-repeat round;
-  -webkit-mask-size: 1.5em var(--o-box-stroke), 1.5em var(--o-box-stroke),
-                     var(--o-box-stroke) 1.5em, var(--o-box-stroke) 1.5em;
-  mask-size: 1.5em var(--o-box-stroke), 1.5em var(--o-box-stroke),
-             var(--o-box-stroke) 1.5em, var(--o-box-stroke) 1.5em;
+  -webkit-mask-size: 1.5em var(--o-stroke), 1.5em var(--o-stroke),
+                     var(--o-stroke) 1.5em, var(--o-stroke) 1.5em;
+  mask-size: 1.5em var(--o-stroke), 1.5em var(--o-stroke),
+             var(--o-stroke) 1.5em, var(--o-stroke) 1.5em;
   /* Les tirets repartent des angles, sinon le motif est coupe en haut. */
   -webkit-mask-position: left top, left bottom, left top, right top;
   mask-position: left top, left bottom, left top, right top;
 }
 
+/* --- Angles arrondis ------------------------------------------------------
+   Les quatre traits du cadre se retirent de la longueur d'un angle et les
+   coins sont fermes par un quart d'anneau en degrade radial. L'anneau calcule
+   son rayon, donc le trait garde son epaisseur quel que soit l'arrondi
+   demande : .o-box-round-lg arrondit franchement sans grossir le cadre, la ou
+   un arc en SVG etire aurait epaissi avec lui.
+
+   Le rayon tient jusqu'a la moitie du plus petit cote : les cotes droits se
+   reduisent et les angles finissent par se rejoindre au milieu, en gelule.
+   Au-dela ils n'ont plus la place de retomber sur les cotes et se croisent,
+   ce qui donne a la boite une forme d'oeil : pour un noeud vraiment rond,
+   .o-bubble reste le bon outil.
+
+   Le rayon se regle par --o-box-radius, sur la boite ou sur le conteneur :
+     <div class="o-box o-box-round" style="--o-box-radius: 1.1em">
+   ------------------------------------------------------------------------ */
+.reveal .o-box-round    { --o-rad: var(--o-box-radius, 0.75em); }
+.reveal .o-box-round-sm { --o-rad: var(--o-box-radius, 0.4em); }
+.reveal .o-box-round-lg { --o-rad: var(--o-box-radius, 1.4em); }
+
+.reveal :is(.o-box-round, .o-box-round-sm, .o-box-round-lg) {
+  /* L'aplat suit l'arrondi du cadre, d'un cheveu plus large pour rester
+     concentrique a l'axe du trait. */
+  --o-round: max(0.18em, var(--o-rad) + var(--o-stroke) / 2);
+}
+
+.reveal :is(.o-box-round, .o-box-round-sm, .o-box-round-lg)::before {
+  /* L'axe du trait passe a mi-bande : un angle occupe donc le rayon plus la
+     demi-bande, et c'est la que les cotes s'arretent. Ils gardent 0.06em de
+     rab pour que leurs bouts arrondis mordent sur l'anneau, sinon un cheveu
+     clair se voit au raccord. */
+  --o-corner: calc(var(--o-rad) + var(--o-stroke) / 2);
+  --o-side: max(0em, 100% - 2 * var(--o-corner) + 0.12em);
+  /* Le SVG des cotes trace 4.4 unites dans une bande de 12 ; l'anneau reprend
+     ce rapport, soit 0.184 de bande de part et d'autre de son axe. */
+  --o-arc-in: max(0em, var(--o-rad) - var(--o-stroke) * 0.184);
+  --o-arc-out: calc(var(--o-rad) + var(--o-stroke) * 0.184);
+  --o-arc: transparent var(--o-arc-in), #000 var(--o-arc-in),
+           #000 var(--o-arc-out), transparent var(--o-arc-out);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 12' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M3,7 C42,4.8 80,7.2 118,5.8 C156,4.4 194,7.6 232,6.6 C260,5.9 280,7 297,5.2'/%3E%3C/svg%3E"),
+                      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 12' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M3,5.4 C40,7.6 78,5 116,6.4 C154,7.8 192,4.8 230,5.8 C258,6.5 280,5.4 297,7.2'/%3E%3C/svg%3E"),
+                      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 300' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M7,3 C4.8,42 7.2,80 5.8,118 C4.4,156 7.6,194 6.6,232 C5.9,260 7,280 5.2,297'/%3E%3C/svg%3E"),
+                      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 300' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M5.4,3 C7.6,40 5,78 6.4,116 C7.8,154 4.8,192 5.8,230 C6.5,258 5.4,280 7.2,297'/%3E%3C/svg%3E"),
+                      radial-gradient(circle at bottom right, var(--o-arc)),
+                      radial-gradient(circle at bottom left, var(--o-arc)),
+                      radial-gradient(circle at top left, var(--o-arc)),
+                      radial-gradient(circle at top right, var(--o-arc));
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 12' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M3,7 C42,4.8 80,7.2 118,5.8 C156,4.4 194,7.6 232,6.6 C260,5.9 280,7 297,5.2'/%3E%3C/svg%3E"),
+              url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 12' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M3,5.4 C40,7.6 78,5 116,6.4 C154,7.8 192,4.8 230,5.8 C258,6.5 280,5.4 297,7.2'/%3E%3C/svg%3E"),
+              url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 300' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M7,3 C4.8,42 7.2,80 5.8,118 C4.4,156 7.6,194 6.6,232 C5.9,260 7,280 5.2,297'/%3E%3C/svg%3E"),
+              url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 300' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M5.4,3 C7.6,40 5,78 6.4,116 C7.8,154 4.8,192 5.8,230 C6.5,258 5.4,280 7.2,297'/%3E%3C/svg%3E"),
+              radial-gradient(circle at bottom right, var(--o-arc)),
+              radial-gradient(circle at bottom left, var(--o-arc)),
+              radial-gradient(circle at top left, var(--o-arc)),
+              radial-gradient(circle at top right, var(--o-arc));
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: var(--o-side) var(--o-stroke),
+                     var(--o-side) var(--o-stroke),
+                     var(--o-stroke) var(--o-side),
+                     var(--o-stroke) var(--o-side),
+                     var(--o-corner) var(--o-corner),
+                     var(--o-corner) var(--o-corner),
+                     var(--o-corner) var(--o-corner),
+                     var(--o-corner) var(--o-corner);
+  mask-size: var(--o-side) var(--o-stroke),
+             var(--o-side) var(--o-stroke),
+             var(--o-stroke) var(--o-side),
+             var(--o-stroke) var(--o-side),
+             var(--o-corner) var(--o-corner),
+             var(--o-corner) var(--o-corner),
+             var(--o-corner) var(--o-corner),
+             var(--o-corner) var(--o-corner);
+  -webkit-mask-position: left calc(var(--o-corner) - 0.06em) top 0,
+                         left calc(var(--o-corner) - 0.06em) bottom 0,
+                         left 0 top calc(var(--o-corner) - 0.06em),
+                         right 0 top calc(var(--o-corner) - 0.06em),
+                         left top,
+                         right top,
+                         right bottom,
+                         left bottom;
+  mask-position: left calc(var(--o-corner) - 0.06em) top 0,
+                 left calc(var(--o-corner) - 0.06em) bottom 0,
+                 left 0 top calc(var(--o-corner) - 0.06em),
+                 right 0 top calc(var(--o-corner) - 0.06em),
+                 left top,
+                 right top,
+                 right bottom,
+                 left bottom;
+}
+
+/* Pointille et arrondi ensemble : les tirets des cotes passent en degrade au
+   lieu du SVG, seul moyen de les tenir entre les deux angles. Un motif SVG
+   repete, lui, se poursuit jusqu'au bord et deborderait sur les coins. */
+.reveal .o-box-dashed:is(.o-box-round, .o-box-round-sm, .o-box-round-lg)::before {
+  --o-dash: #000 0 0.95em, transparent 0.95em 1.5em;
+  /* Le haut de la bande d'encre, aux memes 0.184 de bande que l'anneau. */
+  --o-band: calc(var(--o-stroke) * 0.316);
+  -webkit-mask-image: repeating-linear-gradient(to right, var(--o-dash)),
+                      repeating-linear-gradient(to right, var(--o-dash)),
+                      repeating-linear-gradient(to bottom, var(--o-dash)),
+                      repeating-linear-gradient(to bottom, var(--o-dash)),
+                      radial-gradient(circle at bottom right, var(--o-arc)),
+                      radial-gradient(circle at bottom left, var(--o-arc)),
+                      radial-gradient(circle at top left, var(--o-arc)),
+                      radial-gradient(circle at top right, var(--o-arc));
+  mask-image: repeating-linear-gradient(to right, var(--o-dash)),
+              repeating-linear-gradient(to right, var(--o-dash)),
+              repeating-linear-gradient(to bottom, var(--o-dash)),
+              repeating-linear-gradient(to bottom, var(--o-dash)),
+              radial-gradient(circle at bottom right, var(--o-arc)),
+              radial-gradient(circle at bottom left, var(--o-arc)),
+              radial-gradient(circle at top left, var(--o-arc)),
+              radial-gradient(circle at top right, var(--o-arc));
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: var(--o-side) var(--o-line),
+                     var(--o-side) var(--o-line),
+                     var(--o-line) var(--o-side),
+                     var(--o-line) var(--o-side),
+                     var(--o-corner) var(--o-corner),
+                     var(--o-corner) var(--o-corner),
+                     var(--o-corner) var(--o-corner),
+                     var(--o-corner) var(--o-corner);
+  mask-size: var(--o-side) var(--o-line),
+             var(--o-side) var(--o-line),
+             var(--o-line) var(--o-side),
+             var(--o-line) var(--o-side),
+             var(--o-corner) var(--o-corner),
+             var(--o-corner) var(--o-corner),
+             var(--o-corner) var(--o-corner),
+             var(--o-corner) var(--o-corner);
+  -webkit-mask-position: left calc(var(--o-corner) - 0.06em) top var(--o-band),
+                         left calc(var(--o-corner) - 0.06em) bottom var(--o-band),
+                         left var(--o-band) top calc(var(--o-corner) - 0.06em),
+                         right var(--o-band) top calc(var(--o-corner) - 0.06em),
+                         left top,
+                         right top,
+                         right bottom,
+                         left bottom;
+  mask-position: left calc(var(--o-corner) - 0.06em) top var(--o-band),
+                 left calc(var(--o-corner) - 0.06em) bottom var(--o-band),
+                 left var(--o-band) top calc(var(--o-corner) - 0.06em),
+                 right var(--o-band) top calc(var(--o-corner) - 0.06em),
+                 left top,
+                 right top,
+                 right bottom,
+                 left bottom;
+}
+
+/* --- Cadre a la regle -----------------------------------------------------
+   Le meme gabarit, mais un vrai border CSS a la place des quatre traits au
+   marqueur. C'est le cadre a prendre des que l'arrondi doit tomber pile sur
+   la ligne : le trace a la main, lui, serpente autour de l'angle et son
+   aplat ne peut pas en epouser le contour au cheveu pres. Il rabat de
+   lui-meme un rayon trop grand - une gelule propre la ou le marqueur croise
+   ses angles - et le pointille y devient un tirete regulier.
+
+   Il se pose sur une boite avec .o-box-straight, ou sur le conteneur avec
+   .o-straight pour tout un schema, et se cumule avec .o-box-round, ses
+   variantes, .o-box-dashed, .o-box-fill et .o-bubble. Les couleurs et
+   l'epaisseur restent les memes poignees : --o-ink, --o-box-border,
+   --o-box-stroke. Le cadre est peint au ras du bord de la boite, un cheveu
+   plus au large que le trait au marqueur qui, lui, passe a mi-bande.
+   ------------------------------------------------------------------------ */
+.reveal :is(.o-box-straight, .o-straight .o-box)::before {
+  /* Ni aplat ni masque : il ne reste du pseudo-element que son border. */
+  background: none;
+  -webkit-mask-image: none;
+  mask-image: none;
+  border: var(--o-line) solid var(--o-box-border, var(--o-ink));
+  /* Le meme rayon que l'aplat, sur le meme rectangle : les deux contours se
+     confondent, d'equerre comme arrondis. */
+  border-radius: var(--o-round);
+}
+
+.reveal :is(.o-box-straight, .o-straight .o-box).o-box-dashed::before {
+  border-style: dashed;
+}
+
 /* Fond teinte : l'encre diluee, pour detacher une etape sans introduire une
-   deuxieme couleur dans le schema. */
+   deuxieme couleur dans le schema. La dose se regle par --o-box-fill-alpha. */
 .reveal .o-box-fill {
   --o-box-bg: rgba(255, 255, 255, 0.07);
-  --o-box-bg: color-mix(in srgb, var(--o-ink) 15%, transparent);
+  --o-box-bg: color-mix(in srgb, var(--o-ink) var(--o-box-fill-alpha, 15%), transparent);
 }
 
 /* Post-it : pas de contour, un aplat pose legerement de travers. */
 .reveal .o-box-note {
   --o-box-bg: var(--o-ink);
-  color: #1c1c1c;
-  border-radius: 0.12em;
+  color: var(--o-box-color, #1c1c1c);
+  --o-round: calc(0.12em + var(--o-rad, 0em));
   transform: rotate(-1.4deg);
   box-shadow: 0.1em 0.16em 0.5em rgba(0, 0, 0, 0.35);
 }
@@ -617,7 +826,7 @@
   aspect-ratio: 1;
   min-width: 3.4em;
   padding: 0.5em;
-  border-radius: 50%;
+  --o-round: 50%;
 }
 
 .reveal .o-bubble::before {
@@ -645,8 +854,10 @@
 
 .reveal .o-box-num {
   position: absolute;
-  top: -0.75em;
-  left: -0.75em;
+  /* La pastille rentre avec l'arrondi, sinon elle flotte au large d'un angle
+     arrondi au lieu d'y etre accrochee. */
+  top: calc(-0.75em + var(--o-rad, 0em) * 0.3);
+  left: calc(-0.75em + var(--o-rad, 0em) * 0.3);
   display: grid;
   place-items: center;
   width: 1.7em;
@@ -840,4 +1051,356 @@
 
 @media (prefers-reduced-motion: reduce) {
   .reveal section.present .o-arrow.o-draw::before { animation: none; }
+}
+
+/* === Diagrammes UML =======================================================
+   De quoi poser un schema de modeles Odoo : des boites de classe a
+   compartiments, et des connecteurs a embouts qui s'etirent d'une boite a
+   l'autre - patte de corbeau pour les relations, notation UML pour
+   l'heritage. Tout est trace comme le reste, en SVG teinte par --o-ink, donc
+   les classes de couleur marchent aussi bien sur un connecteur que sur le
+   conteneur, et .o-box-straight / .o-straight passent les boites a la regle.
+
+   Convention  Le modele qui porte le champ est a gauche, le comodel a
+               droite : un .o-many2one part donc de la boite qui declare le
+               champ. Le meme lien vu de l'autre bout, c'est .o-one2many.
+
+   Classes     <div class="o-box o-class">
+                 <b class="o-class-name">sale.order</b>
+                 <ul class="o-class-fields"><li>name</li><li>state</li></ul>
+               </div>
+               Plusieurs .o-class-fields a la suite font plusieurs
+               compartiments - champs, methodes - chacun sous son trait.
+
+   Relations   .o-rel          seul, une association simple
+               .o-many2one     patte a gauche, barre a droite
+               .o-one2many     barre a gauche, patte a droite
+               .o-many2many    patte des deux cotes
+               .o-one2one      barre des deux cotes
+               .o-nav          fleche ouverte : association orientee
+               .o-depend       tiretes et fleche ouverte : dependance
+               .o-inherit      triangle creux : _inherit, generalisation
+               .o-delegate     losange plein : _inherits, delegation
+               .o-aggregate    losange creux : agregation
+
+   Etiquettes  <i class="o-rel o-many2one">
+                 <span>partner_id</span>          au-dessus du trait
+                 <span class="o-rel-a">*</span>   a chaque bout, sous le trait
+                 <span class="o-rel-b">1</span>
+               </i>
+
+   Direction   Le connecteur s'etire a l'horizontale dans une .o-flow et a la
+               verticale dans une .o-flow-v, ses embouts tournes d'office.
+               Ailleurs - dans une .o-grid - .o-down le passe a la verticale.
+   Reglages    --o-ink teinte le trait et ses embouts, --o-mark donne la
+               taille des embouts, --o-rel-band l'epaisseur du trait.
+
+   Exemple :
+     <div class="o-flow o-gap-lg o-straight">
+       <div class="o-box o-class">
+         <b class="o-class-name">sale.order</b>
+         <ul class="o-class-fields"><li>partner_id</li></ul>
+       </div>
+       <i class="o-rel o-many2one"><span>partner_id</span></i>
+       <div class="o-box o-class"><b class="o-class-name">res.partner</b></div>
+     </div>
+   ========================================================================= */
+
+/* --- Boite de classe ------------------------------------------------------
+   Une .o-box dont les compartiments prennent toute la largeur : le cadre et
+   ses variantes ne changent pas, seul le contenu se range en etages. */
+.reveal .o-class {
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0;
+  /* Les compartiments s'occupent eux-memes de leur marge interieure. */
+  padding: 0;
+  min-width: 7em;
+  text-align: left;
+}
+
+.reveal .o-class-name {
+  display: block;
+  padding: 0.5em 0.9em;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.reveal .o-class-fields {
+  position: relative;
+  display: block;
+  margin: 0;
+  padding: 0.5em 0.9em;
+  font-size: 0.66em;
+  line-height: 1.5;
+  text-align: left;
+  list-style: none;
+}
+
+.reveal .o-class-fields > li {
+  margin: 0;
+  padding: 0;
+}
+
+/* Le trait de compartiment, du meme geste que le cadre. Il s'arrete a un
+   cheveu du bord pour ne pas croiser le trace du cadre. */
+.reveal .o-class-fields::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0.1em;
+  right: 0.1em;
+  height: 0.2em;
+  background-color: var(--o-box-border, var(--o-ink));
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M3,7 C40,4.8 82,7.4 122,6 C152,5 176,6.8 197,5.4'/%3E%3C/svg%3E") no-repeat center / 100% 100%;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M3,7 C40,4.8 82,7.4 122,6 C152,5 176,6.8 197,5.4'/%3E%3C/svg%3E") no-repeat center / 100% 100%;
+}
+
+/* A la regle, le trait devient une vraie bordure : il tombe alors pile sur
+   le cadre, qui longe le meme rectangle. */
+.reveal :is(.o-box-straight, .o-straight .o-box) .o-class-fields {
+  border-top: var(--o-line) solid var(--o-box-border, var(--o-ink));
+}
+
+.reveal :is(.o-box-straight, .o-straight .o-box) .o-class-fields::before {
+  content: none;
+}
+
+/* --- Connecteurs ----------------------------------------------------------
+   Comme .o-line, un connecteur n'a pas de longueur propre : il avale
+   l'espace libre de la rangee, ce qui laisse les boites se placer.
+
+   Le trait va sur ::before et les deux embouts sur ::after, en deux couches
+   de masque. L'element lui-meme ne porte ni fond ni masque : un masque pose
+   la rognerait aussi les etiquettes, qui sont ses enfants.
+
+   Un embout est dessine tourne vers la droite ; les autres orientations
+   sortent du meme trace par un transform pose dans le SVG, et la regle de
+   colonne rebranche les variables de forme sur les versions tournees. Les
+   relations, elles, ne nomment que le cote : --o-fork-a est la patte du bout
+   de depart, ou qu'il soit. */
+.reveal .o-rel {
+  --o-mark: 0.9em;
+  --o-rel-band: 0.3em;
+  /* Embouts, par forme et par bout : a au depart, b a l'arrivee. */
+  --o-fork-a: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' transform='translate(24,0) scale(-1,1)' d='M2.6,12 C9,11.2 15,7 21.4,3 M2.6,12 C9.4,12.3 15.2,11.8 21.4,12 M2.6,12 C9,12.8 15,17 21.4,21'/%3E%3C/svg%3E");
+  --o-fork-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' d='M2.6,12 C9,11.2 15,7 21.4,3 M2.6,12 C9.4,12.3 15.2,11.8 21.4,12 M2.6,12 C9,12.8 15,17 21.4,21'/%3E%3C/svg%3E");
+  --o-bar-a: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' d='M12.4,2.8 C11.6,8.6 12.8,15.6 11.9,21.2'/%3E%3C/svg%3E");
+  --o-bar-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' d='M12.4,2.8 C11.6,8.6 12.8,15.6 11.9,21.2'/%3E%3C/svg%3E");
+  --o-tri-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' d='M3.4,3.6 C9.4,6.2 15.4,9.2 21,12 C15.2,14.8 9.4,17.8 3.4,20.4 C3.9,14.8 3.9,9.2 3.4,3.6 Z'/%3E%3C/svg%3E");
+  --o-v-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' d='M4.6,3 C10,6.2 15.6,9.4 20.9,12 C15.6,14.6 10,17.8 4.6,21'/%3E%3C/svg%3E");
+  --o-diamond-a: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round' d='M2.2,12 C6,8.6 9.4,5.2 12.2,2.6 C15.4,5.6 18.8,8.8 21.8,11.9 C18.6,15.2 15.2,18.4 12,21.4 C8.8,18.4 5.4,15.2 2.2,12 Z'/%3E%3C/svg%3E");
+  --o-diamond-open-a: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' d='M2.2,12 C6,8.6 9.4,5.2 12.2,2.6 C15.4,5.6 18.8,8.8 21.8,11.9 C18.6,15.2 15.2,18.4 12,21.4 C8.8,18.4 5.4,15.2 2.2,12 Z'/%3E%3C/svg%3E");
+  /* Pas d'embout : un masque tout transparent, la couche ne peint donc rien.
+     Avec mask-image: none il resterait un carre d'encre. */
+  --o-mark-none: linear-gradient(transparent, transparent);
+  --o-rel-a: var(--o-mark-none);
+  --o-rel-b: var(--o-mark-none);
+  /* Place a laisser au bout du trait : rien pour un embout qui se pose
+     dessus, la taille de l'embout pour un creux, qu'il traverserait. */
+  --o-rel-a-len: 0em;
+  --o-rel-b-len: 0em;
+  --o-rel-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M3,7 C40,4.8 82,7.4 122,6 C152,5 176,6.8 197,5.4'/%3E%3C/svg%3E");
+  --o-rel-len: calc(100% - var(--o-rel-a-len) - var(--o-rel-b-len));
+  --o-rel-repeat: no-repeat;
+  position: relative;
+  /* Deux embouts a loger : un connecteur demande plus de place au minimum
+     qu'un simple .o-line, y compris dans une rangee qui ne s'etire pas. La
+     base vaut ce minimum, pas un cheveu de plus : une rangee mesuree sur son
+     contenu - cellule de .o-grid, boite qui se serre - ne compte que le
+     minimum, et le moindre ecart lui ferait passer la boite suivante a la
+     ligne. */
+  flex: 1 1 3em;
+  align-self: center;
+  min-width: 3em;
+  height: var(--o-rel-band);
+}
+
+.reveal .o-rel::before,
+.reveal .o-rel::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  pointer-events: none;
+  background-color: var(--o-ink);
+  transform: translateY(-50%);
+  -webkit-mask-repeat: var(--o-rel-repeat);
+  mask-repeat: var(--o-rel-repeat);
+}
+
+/* Le trait, etire entre les deux embouts. */
+.reveal .o-rel::before {
+  height: var(--o-rel-band);
+  -webkit-mask-image: var(--o-rel-line);
+  mask-image: var(--o-rel-line);
+  -webkit-mask-size: var(--o-rel-len) 100%;
+  mask-size: var(--o-rel-len) 100%;
+  -webkit-mask-position: left var(--o-rel-a-len) top 0;
+  mask-position: left var(--o-rel-a-len) top 0;
+}
+
+/* Les deux embouts, un a chaque bout de la meme bande. */
+.reveal .o-rel::after {
+  height: var(--o-mark);
+  -webkit-mask-image: var(--o-rel-a), var(--o-rel-b);
+  mask-image: var(--o-rel-a), var(--o-rel-b);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: var(--o-mark) 100%, var(--o-mark) 100%;
+  mask-size: var(--o-mark) 100%, var(--o-mark) 100%;
+  -webkit-mask-position: left center, right center;
+  mask-position: left center, right center;
+}
+
+/* Les relations : un embout a chaque bout, et la place que le trait leur
+   laisse. */
+.reveal .o-many2one  { --o-rel-a: var(--o-fork-a); --o-rel-b: var(--o-bar-b); }
+.reveal .o-one2many  { --o-rel-a: var(--o-bar-a);  --o-rel-b: var(--o-fork-b); }
+.reveal .o-many2many { --o-rel-a: var(--o-fork-a); --o-rel-b: var(--o-fork-b); }
+.reveal .o-one2one   { --o-rel-a: var(--o-bar-a);  --o-rel-b: var(--o-bar-b); }
+.reveal .o-nav       { --o-rel-b: var(--o-v-b); }
+.reveal .o-delegate  { --o-rel-a: var(--o-diamond-a); }
+
+.reveal .o-inherit {
+  --o-rel-b: var(--o-tri-b);
+  /* Triangle creux : le trait s'arrete a sa base au lieu de le traverser.
+     Idem pour le losange creux de l'agregation. */
+  --o-rel-b-len: calc(var(--o-mark) - 0.1em);
+}
+
+.reveal .o-aggregate {
+  --o-rel-a: var(--o-diamond-open-a);
+  --o-rel-a-len: calc(var(--o-mark) - 0.1em);
+}
+
+.reveal .o-depend {
+  --o-rel-b: var(--o-v-b);
+  /* Le trait devient un motif de tirets, repete plutot qu'etire. */
+  --o-rel-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 12' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M4,6.8 L28,5.6'/%3E%3C/svg%3E");
+  --o-rel-len: 1.5em;
+  --o-rel-repeat: round no-repeat;
+}
+
+/* --- Connecteur en colonne ------------------------------------------------
+   Le trait s'etire vers le bas, et les formes se rebranchent sur leur
+   version tournee d'un quart de tour : le bout de depart passe en haut. */
+.reveal :is(.o-flow-v > .o-rel, .o-rel.o-down) {
+  --o-fork-a: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' transform='rotate(-90 12 12)' d='M2.6,12 C9,11.2 15,7 21.4,3 M2.6,12 C9.4,12.3 15.2,11.8 21.4,12 M2.6,12 C9,12.8 15,17 21.4,21'/%3E%3C/svg%3E");
+  --o-fork-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' transform='rotate(90 12 12)' d='M2.6,12 C9,11.2 15,7 21.4,3 M2.6,12 C9.4,12.3 15.2,11.8 21.4,12 M2.6,12 C9,12.8 15,17 21.4,21'/%3E%3C/svg%3E");
+  --o-bar-a: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' transform='rotate(90 12 12)' d='M12.4,2.8 C11.6,8.6 12.8,15.6 11.9,21.2'/%3E%3C/svg%3E");
+  --o-bar-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' transform='rotate(90 12 12)' d='M12.4,2.8 C11.6,8.6 12.8,15.6 11.9,21.2'/%3E%3C/svg%3E");
+  --o-tri-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' transform='rotate(90 12 12)' d='M3.4,3.6 C9.4,6.2 15.4,9.2 21,12 C15.2,14.8 9.4,17.8 3.4,20.4 C3.9,14.8 3.9,9.2 3.4,3.6 Z'/%3E%3C/svg%3E");
+  --o-v-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' transform='rotate(90 12 12)' d='M4.6,3 C10,6.2 15.6,9.4 20.9,12 C15.6,14.6 10,17.8 4.6,21'/%3E%3C/svg%3E");
+  --o-rel-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 200' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M7,3 C4.8,40 7.4,82 6,122 C5,152 6.8,176 5.4,197'/%3E%3C/svg%3E");
+  width: var(--o-rel-band);
+  height: auto;
+  min-width: 0;
+  min-height: 2.5em;
+}
+
+.reveal :is(.o-flow-v > .o-rel, .o-rel.o-down).o-depend {
+  --o-rel-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 44' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='black' stroke-width='4.4' stroke-linecap='round' d='M6.8,4 L5.6,28'/%3E%3C/svg%3E");
+  --o-rel-repeat: no-repeat round;
+}
+
+.reveal :is(.o-flow-v > .o-rel, .o-rel.o-down)::before,
+.reveal :is(.o-flow-v > .o-rel, .o-rel.o-down)::after {
+  left: 50%;
+  right: auto;
+  top: 0;
+  bottom: 0;
+  height: auto;
+  transform: translateX(-50%);
+}
+
+.reveal :is(.o-flow-v > .o-rel, .o-rel.o-down)::before {
+  width: var(--o-rel-band);
+  -webkit-mask-size: 100% var(--o-rel-len);
+  mask-size: 100% var(--o-rel-len);
+  -webkit-mask-position: left 0 top var(--o-rel-a-len);
+  mask-position: left 0 top var(--o-rel-a-len);
+}
+
+.reveal :is(.o-flow-v > .o-rel, .o-rel.o-down)::after {
+  width: var(--o-mark);
+  -webkit-mask-size: 100% var(--o-mark), 100% var(--o-mark);
+  mask-size: 100% var(--o-mark), 100% var(--o-mark);
+  -webkit-mask-position: center top, center bottom;
+  mask-position: center top, center bottom;
+}
+
+/* --- Etiquettes -----------------------------------------------------------
+   Le nom du champ au-dessus du trait, les cardinalites a chaque bout et en
+   dessous, pour ne pas se marcher dessus. */
+.reveal .o-rel > span {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.1em);
+  transform: translateX(-50%);
+  font-size: 0.5em;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0.85;
+}
+
+.reveal .o-rel > .o-rel-a,
+.reveal .o-rel > .o-rel-b {
+  top: calc(100% + 0.1em);
+  bottom: auto;
+  transform: none;
+}
+
+.reveal .o-rel > .o-rel-a { left: calc(var(--o-mark) * 0.85); }
+
+.reveal .o-rel > .o-rel-b {
+  left: auto;
+  right: calc(var(--o-mark) * 0.85);
+}
+
+.reveal :is(.o-flow-v > .o-rel, .o-rel.o-down) > span {
+  left: calc(100% + 0.35em);
+  bottom: 50%;
+  transform: translateY(50%);
+}
+
+.reveal :is(.o-flow-v > .o-rel, .o-rel.o-down) > .o-rel-a,
+.reveal :is(.o-flow-v > .o-rel, .o-rel.o-down) > .o-rel-b {
+  left: auto;
+  right: calc(100% + 0.35em);
+  bottom: auto;
+  transform: none;
+}
+
+.reveal :is(.o-flow-v > .o-rel, .o-rel.o-down) > .o-rel-a {
+  top: calc(var(--o-mark) * 0.85);
+}
+
+.reveal :is(.o-flow-v > .o-rel, .o-rel.o-down) > .o-rel-b {
+  top: auto;
+  bottom: calc(var(--o-mark) * 0.85);
+}
+
+/* --- Connecteur a la regle ------------------------------------------------
+   .o-straight passe le schema entier a la regle, connecteurs compris : le
+   trait devient un aplat droit, et les tirets un motif regulier. Les embouts
+   gardent leur trace - a leur taille, la difference ne se lit pas. */
+.reveal .o-straight .o-rel {
+  --o-rel-line: linear-gradient(#000, #000);
+  /* La bande se reduit a l'epaisseur du trait : l'aplat la remplit toute. */
+  --o-rel-band: calc(0.3em * 0.367);
+}
+
+.reveal .o-straight .o-rel.o-depend {
+  /* Le degrade se repete de lui-meme : le trait reprend toute la longueur au
+     lieu d'une tuile a carreler. */
+  --o-rel-line: repeating-linear-gradient(to right, #000 0 0.55em, transparent 0.55em 0.95em);
+  --o-rel-len: calc(100% - var(--o-rel-a-len) - var(--o-rel-b-len));
+  --o-rel-repeat: no-repeat;
+}
+
+.reveal .o-straight :is(.o-flow-v > .o-rel, .o-rel.o-down).o-depend {
+  --o-rel-line: repeating-linear-gradient(to bottom, #000 0 0.55em, transparent 0.55em 0.95em);
 }

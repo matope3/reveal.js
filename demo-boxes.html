@@ -150,6 +150,100 @@
 					</div>
 				</section>
 
+				<!-- 7. Angles arrondis et reglages -->
+				<section>
+					<h3>Angles arrondis</h3>
+					<div class="o-flow o-gap-lg">
+						<div class="o-box o-box-round-sm">round-sm</div>
+						<div class="o-box o-box-round">round</div>
+						<div class="o-box o-box-round-lg">round-lg</div>
+						<div class="o-box o-box-round o-box-fill">+ fill</div>
+						<div class="o-box o-box-round o-box-dashed">+ dashed</div>
+						<div class="o-box o-box-round o-box-note">+ post-it</div>
+					</div>
+					<!-- Sur le conteneur, un reglage vaut pour tout le schema -->
+					<div class="o-flow o-gap-lg" style="margin-top: 1.5em; --o-box-radius: 1.1em">
+						<div class="o-box o-box-round"><span class="o-box-num">1</span>Devis</div>
+						<i class="o-arrow"></i>
+						<div class="o-box o-box-round" style="--o-ink: #7AE582">--o-ink</div>
+						<i class="o-arrow"></i>
+						<div class="o-box o-box-round" style="--o-box-bg: #4338ca; --o-box-border: #a5b4fc">--o-box-bg</div>
+					</div>
+					<div class="lab">--o-box-radius, --o-ink, --o-box-border, --o-box-bg, --o-box-color, --o-box-stroke, --o-box-fill-alpha</div>
+				</section>
+
+				<!-- 8. Cadre a la regle -->
+				<section>
+					<h3>Cadre a la regle</h3>
+					<div class="o-flow o-gap-lg">
+						<div class="o-box o-box-straight">straight</div>
+						<div class="o-box o-box-straight o-box-round">+ round</div>
+						<div class="o-box o-box-straight o-box-round-lg">+ round-lg</div>
+						<div class="o-box o-box-straight o-box-round o-box-fill">+ fill</div>
+						<div class="o-box o-box-straight o-box-round o-box-dashed">+ dashed</div>
+						<div class="o-box o-box-straight o-bubble">rond</div>
+					</div>
+					<!-- .o-straight sur le conteneur : tout le schema passe a la regle -->
+					<div class="o-flow o-gap-lg o-straight" style="margin-top: 1.5em; --o-box-radius: 1em">
+						<div class="o-box o-box-round"><span class="o-box-num">1</span>Devis</div>
+						<i class="o-arrow"></i>
+						<div class="o-box o-box-round o-box-fill">Confirme</div>
+						<i class="o-arrow"></i>
+						<div class="o-box o-box-round" style="--o-box-radius: 9em">Facture</div>
+					</div>
+					<div class="lab">l'arrondi tombe pile sur la ligne, et un rayon trop grand se rabat en gelule</div>
+				</section>
+
+				<!-- 9. Connecteurs UML -->
+				<section>
+					<h3>Relations</h3>
+					<div class="o-grid" style="grid-template-columns: 1fr 1fr; --o-gap: 0.6em 2.5em; justify-items: stretch">
+						<div class="o-flow" style="flex-wrap: nowrap"><span class="o-box o-box-sm">A</span><i class="o-rel o-many2one"><span>o-many2one</span><span class="o-rel-a">*</span><span class="o-rel-b">1</span></i><span class="o-box o-box-sm">B</span></div>
+						<div class="o-flow" style="flex-wrap: nowrap"><span class="o-box o-box-sm">A</span><i class="o-rel o-one2many"><span>o-one2many</span><span class="o-rel-a">1</span><span class="o-rel-b">*</span></i><span class="o-box o-box-sm">B</span></div>
+						<div class="o-flow" style="flex-wrap: nowrap"><span class="o-box o-box-sm">A</span><i class="o-rel o-many2many"><span>o-many2many</span></i><span class="o-box o-box-sm">B</span></div>
+						<div class="o-flow" style="flex-wrap: nowrap"><span class="o-box o-box-sm">A</span><i class="o-rel o-one2one"><span>o-one2one</span></i><span class="o-box o-box-sm">B</span></div>
+						<div class="o-flow" style="flex-wrap: nowrap"><span class="o-box o-box-sm">A</span><i class="o-rel o-inherit"><span>o-inherit</span></i><span class="o-box o-box-sm">B</span></div>
+						<div class="o-flow" style="flex-wrap: nowrap"><span class="o-box o-box-sm">A</span><i class="o-rel o-delegate"><span>o-delegate</span></i><span class="o-box o-box-sm">B</span></div>
+						<div class="o-flow" style="flex-wrap: nowrap"><span class="o-box o-box-sm">A</span><i class="o-rel o-aggregate"><span>o-aggregate</span></i><span class="o-box o-box-sm">B</span></div>
+						<div class="o-flow" style="flex-wrap: nowrap"><span class="o-box o-box-sm">A</span><i class="o-rel o-nav"><span>o-nav</span></i><span class="o-box o-box-sm">B</span></div>
+						<div class="o-flow" style="flex-wrap: nowrap"><span class="o-box o-box-sm">A</span><i class="o-rel o-depend"><span>o-depend</span></i><span class="o-box o-box-sm">B</span></div>
+						<div class="o-flow" style="flex-wrap: nowrap"><span class="o-box o-box-sm">A</span><i class="o-rel"><span>o-rel</span></i><span class="o-box o-box-sm">B</span></div>
+					</div>
+					<div class="lab">le modele qui porte le champ est a gauche, le comodel a droite</div>
+				</section>
+
+				<!-- 10. Diagramme UML complet -->
+				<section>
+					<h3>Modele de vente</h3>
+					<div class="o-flow-v o-straight" style="align-items: stretch; gap: 0.4em; --o-box-radius: 0.3em">
+						<div class="o-flow" style="justify-content: space-between">
+							<div class="o-box o-class">
+								<b class="o-class-name">sale.order</b>
+								<ul class="o-class-fields"><li>name</li><li>partner_id</li><li>order_line</li></ul>
+							</div>
+							<i class="o-rel o-many2one"><span>partner_id</span><span class="o-rel-a">*</span><span class="o-rel-b">1</span></i>
+							<div class="o-box o-class">
+								<b class="o-class-name">res.partner</b>
+								<ul class="o-class-fields"><li>name</li><li>email</li></ul>
+							</div>
+						</div>
+						<div class="o-flow" style="justify-content: flex-start">
+							<i class="o-rel o-one2many o-down" style="flex: none; margin-left: 3.5em"><span>order_line</span></i>
+						</div>
+						<div class="o-flow" style="justify-content: space-between">
+							<div class="o-box o-class">
+								<b class="o-class-name">sale.order.line</b>
+								<ul class="o-class-fields"><li>order_id</li><li>product_id</li><li>product_uom_qty</li></ul>
+							</div>
+							<i class="o-rel o-many2one"><span>product_id</span></i>
+							<div class="o-box o-class">
+								<b class="o-class-name">product.product</b>
+								<ul class="o-class-fields"><li>list_price</li></ul>
+							</div>
+						</div>
+					</div>
+				</section>
+
 			</div>
 		</div>
 
